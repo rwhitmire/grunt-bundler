@@ -30,20 +30,17 @@ module.exports = function(grunt) {
 
     // Configuration to be run (and then tested).
     bundler: {
-      default_options: {
-        options: {
-        },
-        files: {
-          'tmp/default_options': ['test/fixtures/testing', 'test/fixtures/123']
-        }
-      },
-      custom_options: {
-        options: {
-          separator: ': ',
-          punctuation: ' !!!'
-        },
-        files: {
-          'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123']
+      bundle: {
+        viewFiles: ['test/fixtures/test.html'],
+        bundles: {
+          'css': {
+            type: 'css',
+            files: ['test/fixtures/css/*.css']
+          },
+          'js': {
+            type: 'js',
+            files: ['test/fixtures/js/*.js']
+          },
         }
       }
     },
