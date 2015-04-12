@@ -57,10 +57,19 @@ In this example, the default options are used to do something with whatever. So 
 ```js
 grunt.initConfig({
   bundler: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
+    bundle: {
+      views: ['test/fixtures/test.html'],
+      bundles: {
+        'css': {
+          type: 'css',
+          files: ['test/fixtures/css/*.css']
+        },
+        'js': {
+          type: 'js',
+          files: ['test/fixtures/js/*.js']
+        },
+      }
+    }
   },
 });
 ```
