@@ -10,41 +10,79 @@
 
 module.exports = function(grunt) {
 
-  // Please see the Grunt documentation for more information regarding task
-  // creation: http://gruntjs.com/creating-tasks
+  function processBundles(bundles) {
+    var processedBundles = {};
+
+    for(var key in bundles) {
+      if (!bundles.hasOwnProperty(key)) {
+        continue;
+      }
+
+      processedBundles[key] = processBundle(bundles[key]);
+    }
+
+    return processedBundles;
+  }
+
+  function processBundle(bundle) {
+    var processedBundle = {};
+    processedBundle.files = grunt.file.expand(bundle.files);
+    processedBundle.type = bundle.type;
+    return processedBundle;
+  }
+
+  function injectViews(viewPaths, processedBundles) {
+    for(var i in viewPaths) {
+      if (!viewPaths.hasOwnProperty(i)) {
+        continue;
+      }
+
+      injectView(viewPaths[i], processedBundles);
+    }
+  }
+
+  function injectView(path, processedBundles) {
+    for(var key in processedBundles) {
+      if (!processedBundles.hasOwnProperty(key)) {
+        continue;
+      }
+
+      var literal = /( *|\t*)(<!-- bundle name="{key}" -->)[\d\D]*?(<!-- \/bundle -->)/g.source.replace('{key}', key);
+      var expression = new RegExp(literal);
+      var htmlContent = grunt.file.read(path);
+      var padding = expression.exec(htmlContent)[1];
+      var tags = getBundleTags(processedBundles[key], padding);
+
+      htmlContent = htmlContent.replace(expression, '$1$2' + tags + '$3');
+      grunt.file.write(path, htmlContent);
+    }
+  }
+
+  function getBundleTags(processedBundle, padding) {
+    var tag = '', tags = '';
+
+    if(processedBundle.type === 'css') {
+      tag = '<link rel="stylesheet" href="{fname}">';
+    }
+
+    if(processedBundle.type === 'js') {
+      tag = '<script src="{fname}"></script>';
+    }
+
+    processedBundle.files.forEach(function(fname) {
+      tags += '\n' + padding + tag.replace('{fname}', fname);
+    });
+
+    tags += '\n' + padding;
+
+    return tags;
+  }
 
   grunt.registerMultiTask('bundler', 'Bundle and insert css and js files into html', function() {
-    // Merge task-specific and/or target-specific options with these defaults.
-    var options = this.options({
-      punctuation: '.',
-      separator: ', '
-    });
+    var viewPaths = grunt.file.expand(this.data.viewFiles);
+    var processedBundles = processBundles(this.data.bundles);
 
-    // Iterate over all specified file groups.
-    this.files.forEach(function(f) {
-      // Concat specified files.
-      var src = f.src.filter(function(filepath) {
-        // Warn on and remove invalid source files (if nonull was set).
-        if (!grunt.file.exists(filepath)) {
-          grunt.log.warn('Source file "' + filepath + '" not found.');
-          return false;
-        } else {
-          return true;
-        }
-      }).map(function(filepath) {
-        // Read file source.
-        return grunt.file.read(filepath);
-      }).join(grunt.util.normalizelf(options.separator));
-
-      // Handle options.
-      src += options.punctuation;
-
-      // Write the destination file.
-      grunt.file.write(f.dest, src);
-
-      // Print a success message.
-      grunt.log.writeln('File "' + f.dest + '" created.');
-    });
+    injectViews(viewPaths, processedBundles);
   });
 
 };
