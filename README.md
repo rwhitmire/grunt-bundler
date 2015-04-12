@@ -35,15 +35,6 @@ grunt.initConfig({
 });
 ```
 
-### Options
-
-#### options.root
-Type: `String`
-Default value: `""`
-
-Not yet implemented
-
-
 ### Usage Examples
 
 #### Default Options
@@ -53,6 +44,7 @@ In this example, javascript and css files will be injected into index.html when 
 grunt.initConfig({
   bundler: {
     bundle: {
+      root: 'src',  // optional - defaults to ''
       views: ['index.html'],
       bundles: {
         'css': {
