@@ -31,7 +31,7 @@ module.exports = function(grunt) {
     // Configuration to be run (and then tested).
     bundler: {
       bundle: {
-        viewFiles: ['test/fixtures/test.html'],
+        views: ['test/fixtures/test.html'],
         bundles: {
           'css': {
             type: 'css',

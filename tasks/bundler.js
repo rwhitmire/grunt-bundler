@@ -79,7 +79,7 @@ module.exports = function(grunt) {
   }
 
   grunt.registerMultiTask('bundler', 'Bundle and insert css and js files into html', function() {
-    var viewPaths = grunt.file.expand(this.data.viewFiles);
+    var viewPaths = grunt.file.expand(this.data.views);
     var processedBundles = processBundles(this.data.bundles);
 
     injectViews(viewPaths, processedBundles);
