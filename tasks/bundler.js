@@ -8,7 +8,11 @@
 
 'use strict';
 
+var path = require('path');
+
 module.exports = function(grunt) {
+
+  var root;
 
   function processBundles(bundles) {
     var processedBundles = {};
@@ -26,8 +30,19 @@ module.exports = function(grunt) {
 
   function processBundle(bundle) {
     var processedBundle = {};
-    processedBundle.files = grunt.file.expand(bundle.files);
+
+    var files = bundle.files.map(function(f) {
+      return path.join(root, f);
+    });
+
+    var expandedFiles = grunt.file.expand(files);
+
+    processedBundle.files = expandedFiles.map(function(f) {
+      return path.normalize(f.replace(root + '/', ''));
+    });
+
     processedBundle.type = bundle.type;
+
     return processedBundle;
   }
 
@@ -79,7 +94,13 @@ module.exports = function(grunt) {
   }
 
   grunt.registerMultiTask('bundler', 'Bundle and insert css and js files into html', function() {
-    var viewPaths = grunt.file.expand(this.data.views);
+    root = path.normalize(this.data.root || '');
+
+    var views = this.data.views.map(function(v) {
+      return path.join(root, v);
+    }.bind(this));
+
+    var viewPaths = grunt.file.expand(views);
     var processedBundles = processBundles(this.data.bundles);
 
     injectViews(viewPaths, processedBundles);

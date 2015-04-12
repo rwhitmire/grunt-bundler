@@ -30,8 +30,8 @@ module.exports = function(grunt) {
 
     // Configuration to be run (and then tested).
     bundler: {
-      bundle: {
-        views: ['test/fixtures/test.html'],
+      default_settings: {
+        views: ['test/fixtures/default_settings.html'],
         bundles: {
           'css': {
             type: 'css',
@@ -40,6 +40,20 @@ module.exports = function(grunt) {
           'js': {
             type: 'js',
             files: ['test/fixtures/js/*.js']
+          },
+        }
+      },
+      with_root: {
+        root: 'test/fixtures',
+        views: ['with_root.html'],
+        bundles: {
+          'css': {
+            type: 'css',
+            files: ['css/*.css']
+          },
+          'js': {
+            type: 'js',
+            files: ['js/*.js']
           },
         }
       }

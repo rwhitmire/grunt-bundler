@@ -27,13 +27,22 @@ exports.bundler = {
     // setup here if necessary
     done();
   },
-  default_options: function(test) {
+  default_settings: function(test) {
     test.expect(1);
 
-    var actual = grunt.file.read('test/fixtures/test.html');
-    var expected = grunt.file.read('test/expected/test.html');
+    var actual = grunt.file.read('test/fixtures/default_settings.html');
+    var expected = grunt.file.read('test/expected/default_settings.html');
     test.equal(actual, expected);
 
     test.done();
-  }
+  },
+  with_root: function(test) {
+    test.expect(1);
+
+    var actual = grunt.file.read('test/fixtures/with_root.html');
+    var expected = grunt.file.read('test/expected/with_root.html');
+    test.equal(actual, expected);
+
+    test.done();
+  },
 };
